@@ -5,12 +5,14 @@
 //   ALPHA_FORGE_IMAGE_PUBLISHER_REVISION = '<sha>'   // pinned alpha-forge checkout; copy the pin the repo already has
 //   WIKI_SLUG = '<slug>'
 //   WIKI_IMAGE_NAME = 'alpha/design-wiki-<slug>'
+//   ALPHA_DESIGN_WIKI_REVISION = 'v0.1.0'            // tag of the public theme repo; keep equal to the pin in wiki/package.json
 // The image tag is wiki/VERSION. Bump it with every wiki change: a published version tag never moves.
 //
 // One-time setup outside this repo: the design-wiki Komodo Stack must declare tags/<slug>.env in
 // additional_env_files, and its compose service <slug> must use ${WIKI_<SLUG>_TAG}. The deploy
 // script fails with a clear message when the file is not declared.
-// Copy jenkins/komodo-deploy.mjs from @dabeezor/alpha-design-wiki to wiki/komodo-deploy.mjs.
+// The deploy script runs from the pinned theme checkout, .image-tools/alpha-design-wiki. Do not copy it into wiki/.
+// Credentials: komodo-api-key (Komodo API), github-dabeezor (alpha-forge checkout).
 
     stage('Build wiki image') {
       // Every branch and PR builds the image, so a broken wiki fails on the PR. Nothing is pushed.
@@ -20,6 +22,12 @@
           checkout([$class: 'GitSCM',
             branches: [[name: env.ALPHA_FORGE_IMAGE_PUBLISHER_REVISION]],
             userRemoteConfigs: [[url: 'https://github.com/dabeezor/alpha-forge.git', credentialsId: 'github-dabeezor']],
+          ])
+        }
+        dir('.image-tools/alpha-design-wiki') {
+          checkout([$class: 'GitSCM',
+            branches: [[name: "refs/tags/${env.ALPHA_DESIGN_WIKI_REVISION}"]],
+            userRemoteConfigs: [[url: 'https://github.com/dabeezor/alpha-design-wiki.git']],
           ])
         }
         // buildkit-publish.sh resolves --context against ITS OWN repo root, so
@@ -89,7 +97,7 @@
               export TAG_VAR="WIKI_$(printf '%s' "$WIKI_SLUG" | tr 'a-z-' 'A-Z_')_TAG"
               export VERIFY_URL="http://10.10.10.10:3011/${WIKI_SLUG}/version.txt"
               export REQUIRED_SERVICES="$WIKI_SLUG"
-              node wiki/komodo-deploy.mjs
+              node .image-tools/alpha-design-wiki/jenkins/komodo-deploy.mjs
             '''
           }
         }

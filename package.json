@@ -12,12 +12,27 @@
     "./template/*": "./template/*",
     "./package.json": "./package.json"
   },
-  "files": ["theme.css", "palette.mjs", "components", "overrides", "template", "jenkins", "README.md"],
+  "files": [
+    "theme.css",
+    "palette.mjs",
+    "components/",
+    "overrides/",
+    "template/",
+    "jenkins/",
+    "README.md"
+  ],
   "peerDependencies": {
     "@astrojs/starlight": "^0.42.0",
     "astro": "^7.0.0"
   },
   "dependencies": {
     "@google/model-viewer": "^4.4.0"
+  },
+  "engines": {
+    "node": ">=22.23.4"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dabeezor/alpha-design-wiki.git"
   }
 }

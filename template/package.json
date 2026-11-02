@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@astrojs/starlight": "^0.42.8",
-    "@dabeezor/alpha-design-wiki": "github:dabeezor/alpha-design-wiki#v0.1.0",
+    "@dabeezor/alpha-design-wiki": "https://github.com/dabeezor/alpha-design-wiki/archive/refs/tags/v0.1.0.tar.gz",
     "astro": "^7.4.4"
   }
 }

@@ -9,11 +9,11 @@ No build step: `.astro` and `.css` ship as source.
 
 1. Copy `template/` to `<repo>/wiki/`. From a checkout: `Copy-Item -Recurse template <repo>\wiki`.
 2. In every file, replace `__SLUG__` (URL path, lowercase), `__TITLE__` (display name) and `__REPO__` (repo name).
-3. Set the colours in `palette.json`.
-   Make sure the repo ignores `node_modules`, `dist`, `.astro` and `.env` (npm does not ship a template `.gitignore`).
+3. Rename `gitignore` to `.gitignore`. npm does not ship a file with that name.
+   Set the colours in `palette.json`.
 4. Run `npm install`, commit `package-lock.json`, then run `npm run dev`.
 5. Add the three stages from `jenkins/wiki-stages.groovy.txt` to the project Jenkinsfile.
-   Copy `jenkins/komodo-deploy.mjs` to `wiki/komodo-deploy.mjs`.
+   The deploy script runs from the pinned theme checkout. Do not copy it.
 
 The Docker build copies `.env.example` to `.env`. This sets the Remark42 host and the site id.
 Local `npm run dev` has no `.env`, so the comment box does not show.
@@ -63,6 +63,15 @@ When `PUBLIC_REMARK_HOST` is not set, the embed is skipped.
 
 ## Bump the pin in a project
 
-1. In `wiki/package.json`, change the tag in `github:dabeezor/alpha-design-wiki#vX.Y.Z`.
+This repo is public. The template depends on the release tarball, so `npm ci` needs no git and no token inside `node:24-alpine`.
+
+1. In `wiki/package.json`, change the tag in `https://github.com/dabeezor/alpha-design-wiki/archive/refs/tags/vX.Y.Z.tar.gz`.
 2. Run `npm install` in `wiki/`. Commit `package.json` and `package-lock.json`.
 3. Bump `wiki/VERSION`.
+4. Set `ALPHA_DESIGN_WIKI_REVISION` in the Jenkinsfile to the same tag.
+
+## Deploy notes
+
+- One-time Komodo setup: the `design-wiki` Stack must declare `tags/<slug>.env` in `additional_env_files`. Its compose service `<slug>` must use `${WIKI_<SLUG>_TAG}`.
+- Jenkins credentials: `komodo-api-key` (Komodo API) and `github-dabeezor` (alpha-forge checkout).
+- Two wikis that deploy at the same time can collide on the Stack. The deploy script waits for a running Update. A race that remains is accepted.
