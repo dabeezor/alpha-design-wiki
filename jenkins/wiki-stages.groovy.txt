@@ -87,7 +87,7 @@
               export TAG="$(tr -d '[:space:]' < wiki/VERSION)"
               export TAG_FILE="tags/${WIKI_SLUG}.env"
               export TAG_VAR="WIKI_$(printf '%s' "$WIKI_SLUG" | tr 'a-z-' 'A-Z_')_TAG"
-              export VERIFY_URL="http://10.10.10.10:3010/${WIKI_SLUG}/version.txt"
+              export VERIFY_URL="http://10.10.10.10:3011/${WIKI_SLUG}/version.txt"
               export REQUIRED_SERVICES="$WIKI_SLUG"
               node wiki/komodo-deploy.mjs
             '''

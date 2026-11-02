@@ -2,7 +2,7 @@
 
 Shared Starlight theme, components and project template for the Alpha Technology design wikis.
 Each project keeps its wiki in `<repo>/wiki/`. Jenkins builds it into an nginx image.
-The front nginx serves it at `http://10.10.10.10:3010/<slug>/`.
+The front nginx serves it at `http://10.10.10.10:3011/<slug>/`.
 No build step: `.astro` and `.css` ship as source.
 
 ## Scaffold a wiki

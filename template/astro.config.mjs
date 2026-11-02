@@ -17,7 +17,7 @@ const dirs = [
 // PUBLIC_REMARK_HOST and PUBLIC_WIKI_SLUG come from .env (see .env.example).
 // The Dockerfile copies .env.example to .env for the build. Local dev has no .env, so no comments.
 export default defineConfig({
-  site: 'http://10.10.10.10:3010',
+  site: 'http://10.10.10.10:3011',
   base: '/__SLUG__',
   integrations: [
     starlight({
