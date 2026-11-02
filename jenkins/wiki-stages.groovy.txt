@@ -1,0 +1,97 @@
+// Three stages for a project Jenkinsfile that owns a wiki/ folder.
+// Paste inside `stages { ... }`.
+//
+// Needs in the Jenkinsfile environment { } block:
+//   ALPHA_FORGE_IMAGE_PUBLISHER_REVISION = '<sha>'   // pinned alpha-forge checkout; copy the pin the repo already has
+//   WIKI_SLUG = '<slug>'
+//   WIKI_IMAGE_NAME = 'alpha/design-wiki-<slug>'
+// The image tag is wiki/VERSION. Bump it with every wiki change: a published version tag never moves.
+//
+// One-time setup outside this repo: the design-wiki Komodo Stack must declare tags/<slug>.env in
+// additional_env_files, and its compose service <slug> must use ${WIKI_<SLUG>_TAG}. The deploy
+// script fails with a clear message when the file is not declared.
+// Copy jenkins/komodo-deploy.mjs from @dabeezor/alpha-design-wiki to wiki/komodo-deploy.mjs.
+
+    stage('Build wiki image') {
+      // Every branch and PR builds the image, so a broken wiki fails on the PR. Nothing is pushed.
+      when { changeset 'wiki/**' }
+      steps {
+        dir('.image-tools/alpha-forge') {
+          checkout([$class: 'GitSCM',
+            branches: [[name: env.ALPHA_FORGE_IMAGE_PUBLISHER_REVISION]],
+            userRemoteConfigs: [[url: 'https://github.com/dabeezor/alpha-forge.git', credentialsId: 'github-dabeezor']],
+          ])
+        }
+        // buildkit-publish.sh resolves --context against ITS OWN repo root, so
+        // ../../wiki is this workspace's wiki/ folder. Keep the depth at two.
+        sh '''
+          set -e
+          .image-tools/alpha-forge/scripts/buildkit-publish.sh build \
+            --image "$WIKI_IMAGE_NAME" \
+            --context ../../wiki \
+            --dockerfile-dir ../../wiki
+        '''
+      }
+    }
+
+    stage('Publish wiki image') {
+      when {
+        allOf {
+          branch 'main'
+          changeset 'wiki/**'
+        }
+      }
+      steps {
+        sh '''
+          set -eu
+          WIKI_VERSION="$(tr -d '[:space:]' < wiki/VERSION)"
+          [ -n "$WIKI_VERSION" ] || { echo "wiki/VERSION is empty" >&2; exit 1; }
+
+          .image-tools/alpha-forge/scripts/buildkit-publish.sh publish \
+            --image "$WIKI_IMAGE_NAME" \
+            --context ../../wiki \
+            --dockerfile-dir ../../wiki \
+            "$WIKI_VERSION" > wiki-image-publish.out
+
+          digest="$(grep -Eo "[^[:space:]]+@sha256:[0-9a-f]{64}" wiki-image-publish.out | tail -n 1)"
+          [ -n "$digest" ] || { echo "publisher printed no digest" >&2; exit 1; }
+          printf '%s\\n' "$digest" > wiki-image-digest.txt
+          echo "published $WIKI_VERSION -> $digest"
+        '''
+      }
+      post {
+        always {
+          archiveArtifacts artifacts: 'wiki-image-digest.txt,wiki-image-publish.out', fingerprint: true, allowEmptyArchive: true
+        }
+      }
+    }
+
+    stage('Deploy design-wiki via Komodo') {
+      // Placed right after Publish: Jenkins decides changeset against the previous build, so
+      // a build that dies earlier would consume the change and skip this deploy for good.
+      when {
+        allOf {
+          branch 'main'
+          changeset 'wiki/**'
+        }
+      }
+      steps {
+        catchError(buildResult: 'FAILURE', stageResult: 'FAILURE', message: 'Wiki deploy failed; continuing so later stages still run') {
+          withCredentials([
+            usernamePassword(credentialsId: 'komodo-api-key', usernameVariable: 'KOMODO_API_KEY', passwordVariable: 'KOMODO_API_SECRET')
+          ]) {
+            sh '''
+              set -eu
+              export KOMODO_URL="http://10.10.10.10:9120"
+              export STACK="design-wiki"
+              export TAG="$(tr -d '[:space:]' < wiki/VERSION)"
+              export TAG_FILE="tags/${WIKI_SLUG}.env"
+              export TAG_VAR="WIKI_$(printf '%s' "$WIKI_SLUG" | tr 'a-z-' 'A-Z_')_TAG"
+              export VERIFY_URL="http://10.10.10.10:3010/${WIKI_SLUG}/version.txt"
+              export REQUIRED_SERVICES="$WIKI_SLUG"
+              node wiki/komodo-deploy.mjs
+            '''
+          }
+        }
+      }
+    }

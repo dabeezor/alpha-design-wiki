@@ -1,0 +1,82 @@
+/*
+ * Alpha design wiki theme. Maps Starlight tokens to the --palette-* tokens that
+ * paletteHead() writes on :root. One palette per project: the palette decides
+ * the look, so light and dark mode both follow it. The fallbacks below only
+ * apply when a site forgot paletteHead().
+ */
+:root {
+  --aw-accent: var(--palette-accent, #5b6cff);
+  --aw-accent-text: var(--palette-accent-text, #ffffff);
+  --aw-bg: var(--palette-bg, #14161c);
+  --aw-bg-nav: var(--palette-bg-nav, #1a1d25);
+  --aw-text: var(--palette-text, #eceef4);
+  --aw-text-muted: var(--palette-text-muted, #a0a6b8);
+  --aw-line: var(--palette-line, #2c303c);
+  --aw-radius: 12px;
+
+  --sl-font: var(--palette-font, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif);
+
+  --sl-color-white: var(--aw-text);
+  --sl-color-black: var(--aw-bg);
+  --sl-color-gray-1: color-mix(in srgb, var(--aw-text) 90%, var(--aw-bg));
+  --sl-color-gray-2: color-mix(in srgb, var(--aw-text) 75%, var(--aw-bg));
+  --sl-color-gray-3: var(--aw-text-muted);
+  --sl-color-gray-4: color-mix(in srgb, var(--aw-text-muted) 60%, var(--aw-bg));
+  --sl-color-gray-5: color-mix(in srgb, var(--aw-text) 14%, var(--aw-bg));
+  --sl-color-gray-6: color-mix(in srgb, var(--aw-text) 7%, var(--aw-bg));
+  --sl-color-gray-7: color-mix(in srgb, var(--aw-text) 4%, var(--aw-bg));
+
+  --sl-color-accent: var(--aw-accent);
+  --sl-color-accent-high: color-mix(in srgb, var(--aw-accent) 70%, var(--aw-text));
+  --sl-color-accent-low: color-mix(in srgb, var(--aw-accent) 18%, var(--aw-bg));
+
+  --sl-color-bg: var(--aw-bg);
+  --sl-color-bg-nav: var(--aw-bg-nav);
+  --sl-color-bg-sidebar: var(--aw-bg-nav);
+  --sl-color-bg-inline-code: var(--sl-color-gray-5);
+  --sl-color-text: var(--aw-text);
+  --sl-color-text-accent: var(--sl-color-accent-high);
+  --sl-color-text-invert: var(--aw-accent-text);
+  --sl-color-hairline: var(--aw-line);
+  --sl-color-hairline-light: var(--aw-line);
+  --sl-color-hairline-shade: var(--aw-line);
+}
+
+/* Same values in both modes: Starlight's own light/dark blocks sit in a layer and lose to this. */
+:root[data-theme='light'],
+:root[data-theme='dark'] {
+  --sl-color-white: var(--aw-text);
+  --sl-color-black: var(--aw-bg);
+  --sl-color-gray-1: color-mix(in srgb, var(--aw-text) 90%, var(--aw-bg));
+  --sl-color-gray-2: color-mix(in srgb, var(--aw-text) 75%, var(--aw-bg));
+  --sl-color-gray-3: var(--aw-text-muted);
+  --sl-color-gray-4: color-mix(in srgb, var(--aw-text-muted) 60%, var(--aw-bg));
+  --sl-color-gray-5: color-mix(in srgb, var(--aw-text) 14%, var(--aw-bg));
+  --sl-color-gray-6: color-mix(in srgb, var(--aw-text) 7%, var(--aw-bg));
+  --sl-color-gray-7: color-mix(in srgb, var(--aw-text) 4%, var(--aw-bg));
+  --sl-color-accent-high: color-mix(in srgb, var(--aw-accent) 70%, var(--aw-text));
+  --sl-color-accent-low: color-mix(in srgb, var(--aw-accent) 18%, var(--aw-bg));
+  --sl-color-bg-inline-code: var(--sl-color-gray-5);
+  --sl-color-text-accent: var(--sl-color-accent-high);
+  --sl-color-hairline: var(--aw-line);
+  --sl-color-hairline-light: var(--aw-line);
+  --sl-color-hairline-shade: var(--aw-line);
+}
+
+/* Restrained house look: hairlines, one radius. */
+.aw-card,
+.sl-markdown-content :is(img, pre, table, figure) {
+  border-radius: var(--aw-radius);
+}
+.sl-markdown-content pre { border: 1px solid var(--aw-line); }
+.aw-card {
+  border: 1px solid var(--aw-line);
+  background: var(--sl-color-gray-6);
+  overflow: hidden;
+}
+.aw-caption {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  color: var(--aw-text-muted);
+  font-size: var(--sl-text-sm);
+}

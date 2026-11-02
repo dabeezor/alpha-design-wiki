@@ -1,0 +1,18 @@
+---
+interface Props { swatches: Record<string, string> }
+const { swatches } = Astro.props;
+---
+<div class="swatches not-content">
+  {Object.entries(swatches).map(([name, hex]) => (
+    <div class="aw-card tile">
+      <div class="chip" style={`background:${hex}`}></div>
+      <div class="meta"><strong>{name}</strong><code>{hex}</code></div>
+    </div>
+  ))}
+</div>
+<style>
+  .swatches { display: grid; grid-template-columns: repeat(auto-fill, minmax(8.5rem, 1fr)); gap: 0.75rem; margin: 1rem 0; }
+  .chip { height: 4rem; border-bottom: 1px solid var(--sl-color-hairline); }
+  .meta { display: grid; padding: 0.5rem 0.75rem; font-size: var(--sl-text-sm); }
+  code { color: var(--sl-color-gray-3); background: none; padding: 0; }
+</style>

@@ -1,0 +1,13 @@
+---
+import { withBase } from './url';
+interface Props { src: string; caption?: string }
+const { src, caption } = Astro.props;
+---
+<figure class="aw-card clip not-content">
+  <audio controls preload="none" src={withBase(src)}></audio>
+  {caption && <figcaption class="aw-caption">{caption}</figcaption>}
+</figure>
+<style>
+  .clip { margin: 1rem 0; padding-top: 0.5rem; }
+  audio { display: block; width: 100%; }
+</style>

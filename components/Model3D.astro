@@ -1,0 +1,12 @@
+---
+import { withBase } from './url';
+interface Props { src: string; poster?: string; alt: string }
+const { src, poster, alt } = Astro.props;
+---
+<model-viewer class="aw-card not-content" src={withBase(src)} poster={poster ? withBase(poster) : undefined} alt={alt} camera-controls loading="lazy"></model-viewer>
+<script>
+  import '@google/model-viewer';
+</script>
+<style>
+  model-viewer { display: block; width: 100%; height: 22rem; margin: 1rem 0; }
+</style>

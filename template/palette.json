@@ -1,0 +1,18 @@
+{
+  "roles": {
+    "accent": "#e0a030",
+    "accentText": "#1a1206",
+    "bg": "#14161c",
+    "bgNav": "#1b1e26",
+    "text": "#eceef4",
+    "textMuted": "#a0a6b8",
+    "line": "#2c303c"
+  },
+  "swatches": {
+    "Forge amber": "#e0a030",
+    "Ink": "#14161c",
+    "Slate": "#1b1e26",
+    "Bone": "#eceef4",
+    "Ash": "#a0a6b8"
+  }
+}

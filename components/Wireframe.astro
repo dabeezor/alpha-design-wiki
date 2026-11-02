@@ -1,0 +1,15 @@
+---
+import { withBase } from './url';
+interface Props { src: string; caption?: string; width?: number | string }
+const { src, caption, width } = Astro.props;
+const url = withBase(src);
+const w = typeof width === 'number' ? `${width}px` : width;
+---
+<figure class="aw-card wf not-content" style={w ? `max-width:${w}` : undefined}>
+  <a href={url} target="_blank" rel="noopener"><img src={url} alt={caption ?? ''} loading="lazy" /></a>
+  {caption && <figcaption class="aw-caption">{caption}</figcaption>}
+</figure>
+<style>
+  .wf { margin: 1rem 0; }
+  img { display: block; width: 100%; height: auto; }
+</style>

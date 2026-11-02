@@ -1,0 +1,18 @@
+---
+import { withBase } from './url';
+interface Props { images: { src: string; alt: string; caption?: string }[]; cols?: number }
+const { images, cols = 3 } = Astro.props;
+---
+<div class="gallery not-content" style={`--cols:${cols}`}>
+  {images.map((img) => (
+    <figure class="aw-card">
+      <a href={withBase(img.src)} target="_blank" rel="noopener"><img src={withBase(img.src)} alt={img.alt} loading="lazy" /></a>
+      {img.caption && <figcaption class="aw-caption">{img.caption}</figcaption>}
+    </figure>
+  ))}
+</div>
+<style>
+  .gallery { display: grid; grid-template-columns: repeat(var(--cols), 1fr); gap: 0.75rem; margin: 1rem 0; }
+  img { display: block; width: 100%; height: auto; }
+  @media (max-width: 40rem) { .gallery { grid-template-columns: repeat(min(var(--cols), 2), 1fr); } }
+</style>

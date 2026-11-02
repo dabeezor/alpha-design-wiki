@@ -1,0 +1,8 @@
+---
+interface Props { id: string; aspect?: string }
+const { id, aspect = '16/9' } = Astro.props;
+---
+<iframe class="aw-card pc not-content" src={`https://playcanv.as/e/p/${id}/`} title="PlayCanvas scene" allowfullscreen loading="lazy" style={`aspect-ratio:${aspect}`}></iframe>
+<style>
+  .pc { display: block; width: 100%; margin: 1rem 0; }
+</style>

@@ -1,0 +1,14 @@
+---
+import { withBase } from './url';
+interface Props { src: string; width?: number; height?: number; title?: string }
+const { src, width = 390, height = 844, title = 'Prototype' } = Astro.props;
+const url = withBase(src);
+---
+<div class="proto not-content">
+  <iframe src={url} title={title} width={width} height={height} loading="lazy" class="aw-card"></iframe>
+  <a href={url} target="_blank" rel="noopener">Open in new tab</a>
+</div>
+<style>
+  .proto { margin: 1rem 0; display: grid; gap: 0.5rem; justify-items: start; }
+  iframe { max-width: 100%; background: #fff; }
+</style>

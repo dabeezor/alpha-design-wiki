@@ -1,0 +1,23 @@
+{
+  "name": "@dabeezor/alpha-design-wiki",
+  "version": "0.1.0",
+  "description": "Shared Starlight theme, components and template for Alpha Technology design wikis.",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    "./theme.css": "./theme.css",
+    "./palette": "./palette.mjs",
+    "./components": "./components/index.ts",
+    "./overrides/*": "./overrides/*",
+    "./template/*": "./template/*",
+    "./package.json": "./package.json"
+  },
+  "files": ["theme.css", "palette.mjs", "components", "overrides", "template", "jenkins", "README.md"],
+  "peerDependencies": {
+    "@astrojs/starlight": "^0.42.0",
+    "astro": "^7.0.0"
+  },
+  "dependencies": {
+    "@google/model-viewer": "^4.4.0"
+  }
+}

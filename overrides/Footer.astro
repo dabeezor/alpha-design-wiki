@@ -1,0 +1,26 @@
+---
+// Default Starlight footer, then a Remark42 comment embed. Config comes from
+// PUBLIC_REMARK_HOST and PUBLIC_WIKI_SLUG (see the template .env.example).
+// No PUBLIC_REMARK_HOST (local dev) means no embed.
+import Default from '@astrojs/starlight/components/Footer.astro';
+const host = import.meta.env.PUBLIC_REMARK_HOST;
+const siteId = import.meta.env.PUBLIC_WIKI_SLUG;
+---
+<Default {...Astro.props}><slot /></Default>
+{host && (
+  <div class="not-content" style="margin-top:2rem">
+    <div id="remark42"></div>
+    <script is:inline define:vars={{ host, siteId }}>
+      // define:vars wraps this script in a function, so set the global the loader reads.
+      var remark_config = window.remark_config = {
+        host: host,
+        site_id: siteId,
+        // Origin plus path, so a heading anchor does not start a second thread.
+        url: location.origin + location.pathname,
+        theme: document.documentElement.dataset.theme === 'light' ? 'light' : 'dark',
+        components: ['embed'],
+      };
+      !function(e,n){for(var o=0;o<e.length;o++){var r=n.createElement("script"),c=".js",d=n.head||n.body;"noModule"in r?(r.type="module",c=".mjs"):r.async=!0,r.defer=!0,r.src=remark_config.host+"/web/"+e[o]+c,d.appendChild(r)}}(remark_config.components||["embed"],document);
+    </script>
+  </div>
+)}
