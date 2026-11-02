@@ -6,7 +6,9 @@
 //   WIKI_SLUG = '<slug>'
 //   WIKI_IMAGE_NAME = 'alpha/design-wiki-<slug>'
 //   ALPHA_DESIGN_WIKI_REVISION = 'v0.1.0'            // tag of the public theme repo; keep equal to the pin in wiki/package.json
-// The image tag is wiki/VERSION. Bump it with every wiki change: a published version tag never moves.
+// The deploy tag is the first 12 characters of the git sha. Jenkins writes it to wiki/public/version.txt
+// (Astro copies it into dist/), and the deploy script waits until /<slug>/version.txt shows it.
+// buildkit-publish.sh publishes two tags: wiki/VERSION and that same 12-character sha.
 //
 // One-time setup outside this repo: the design-wiki Komodo Stack must declare tags/<slug>.env in
 // additional_env_files, and its compose service <slug> must use ${WIKI_<SLUG>_TAG}. The deploy
@@ -34,6 +36,7 @@
         // ../../wiki is this workspace's wiki/ folder. Keep the depth at two.
         sh '''
           set -e
+          printf '%s\\n' "$(printf '%s' "$GIT_COMMIT" | cut -c1-12)" > wiki/public/version.txt
           .image-tools/alpha-forge/scripts/buildkit-publish.sh build \
             --image "$WIKI_IMAGE_NAME" \
             --context ../../wiki \
@@ -52,19 +55,21 @@
       steps {
         sh '''
           set -eu
-          WIKI_VERSION="$(tr -d '[:space:]' < wiki/VERSION)"
-          [ -n "$WIKI_VERSION" ] || { echo "wiki/VERSION is empty" >&2; exit 1; }
+          printf '%s\\n' "$(printf '%s' "$GIT_COMMIT" | cut -c1-12)" > wiki/public/version.txt
 
+          # The sha tag is the immutable one. The VERSION tag is a label that moves with the
+          # content unless VERSION is bumped, so --allow-tag-move is deliberate here.
           .image-tools/alpha-forge/scripts/buildkit-publish.sh publish \
             --image "$WIKI_IMAGE_NAME" \
             --context ../../wiki \
             --dockerfile-dir ../../wiki \
-            "$WIKI_VERSION" > wiki-image-publish.out
+            --version-file ../../wiki/VERSION \
+            --allow-tag-move > wiki-image-publish.out
 
           digest="$(grep -Eo "[^[:space:]]+@sha256:[0-9a-f]{64}" wiki-image-publish.out | tail -n 1)"
           [ -n "$digest" ] || { echo "publisher printed no digest" >&2; exit 1; }
           printf '%s\\n' "$digest" > wiki-image-digest.txt
-          echo "published $WIKI_VERSION -> $digest"
+          echo "published -> $digest"
         '''
       }
       post {
@@ -92,7 +97,7 @@
               set -eu
               export KOMODO_URL="http://10.10.10.10:9120"
               export STACK="design-wiki"
-              export TAG="$(tr -d '[:space:]' < wiki/VERSION)"
+              export TAG="$(printf '%s' "$GIT_COMMIT" | cut -c1-12)"
               export TAG_FILE="tags/${WIKI_SLUG}.env"
               export TAG_VAR="WIKI_$(printf '%s' "$WIKI_SLUG" | tr 'a-z-' 'A-Z_')_TAG"
               export VERIFY_URL="http://10.10.10.10:3011/${WIKI_SLUG}/version.txt"

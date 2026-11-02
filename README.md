@@ -19,8 +19,10 @@ The Docker build copies `.env.example` to `.env`. This sets the Remark42 host an
 Local `npm run dev` has no `.env`, so the comment box does not show.
 To test comments locally, copy `.env.example` to `.env`.
 
-Bump `wiki/VERSION` with every wiki change. It is the image tag, and a published tag never moves.
-The image serves `VERSION` as `/<slug>/version.txt`. The Komodo deploy step checks that file.
+`wiki/VERSION` is a label tag. `buildkit-publish.sh` needs it as `--version-file`.
+The deploy tag is the first 12 characters of the git sha. Jenkins writes it to `wiki/public/version.txt` before the build.
+Astro copies that file into the image as `/<slug>/version.txt`. The Komodo deploy step waits until that file shows the sha.
+Nothing else may write `version.txt`.
 
 ## Palette contract
 
@@ -67,8 +69,7 @@ This repo is public. The template depends on the release tarball, so `npm ci` ne
 
 1. In `wiki/package.json`, change the tag in `https://github.com/dabeezor/alpha-design-wiki/archive/refs/tags/vX.Y.Z.tar.gz`.
 2. Run `npm install` in `wiki/`. Commit `package.json` and `package-lock.json`.
-3. Bump `wiki/VERSION`.
-4. Set `ALPHA_DESIGN_WIKI_REVISION` in the Jenkinsfile to the same tag.
+3. Set `ALPHA_DESIGN_WIKI_REVISION` in the Jenkinsfile to the same tag.
 
 ## Deploy notes
 
