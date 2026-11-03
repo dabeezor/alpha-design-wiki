@@ -17,6 +17,7 @@
     "palette.mjs",
     "components/",
     "overrides/",
+    "comments/",
     "template/",
     "jenkins/",
     "README.md"

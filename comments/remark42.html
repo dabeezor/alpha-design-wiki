@@ -1,0 +1,30 @@
+<!-- Remark42 comments for any hand-built page. Paste where the comments go.
+     Set HOST and SITE_ID below. Readers sign in with their own account; Remark42 tracks each comment to that account.
+     Same server and site_id as the Footer.astro override, so old and new pages share one comment system. -->
+<div id="remark42"></div>
+<script>
+  (function () {
+    var HOST = 'http://10.10.10.10:3011/remark';   // Remark42 server URL (the value of PUBLIC_REMARK_HOST)
+    var SITE_ID = 'CHANGE-ME';               // Remark42 site_id for this site
+    var dark = window.matchMedia('(prefers-color-scheme: dark)');
+    var themeOf = function () {
+      var t = document.documentElement.dataset.theme;
+      return t ? (t === 'light' ? 'light' : 'dark') : (dark.matches ? 'dark' : 'light');
+    };
+    window.remark_config = {
+      host: HOST,
+      site_id: SITE_ID,
+      // Origin plus path: a #anchor must not start a second thread.
+      url: location.origin + location.pathname,
+      theme: themeOf(),
+      components: ['embed']
+    };
+    var s = document.createElement('script');
+    s.type = 'module';
+    s.src = HOST + '/web/embed.mjs';
+    document.head.appendChild(s);
+    var sync = function () { if (window.REMARK42 && window.REMARK42.changeTheme) window.REMARK42.changeTheme(themeOf()); };
+    dark.addEventListener('change', sync);
+    new MutationObserver(sync).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  })();
+</script>

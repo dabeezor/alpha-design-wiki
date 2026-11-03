@@ -63,6 +63,11 @@ Put the files in the wiki `public/` folder. Components need a `.mdx` page.
 It reads `PUBLIC_REMARK_HOST` and `PUBLIC_WIKI_SLUG` (the Remark42 `site_id`).
 When `PUBLIC_REMARK_HOST` is not set, the embed is skipped.
 
+### Comments on a hand-built page
+
+A page that does not use Starlight can still have comments. Copy  into the page where the comments go, then set .
+It uses the same Remark42 server as the footer. Readers sign in with their own account, and Remark42 tracks each comment to it.
+
 ## Bump the pin in a project
 
 This repo is public. The template depends on the release tarball, so `npm ci` needs no git and no token inside `node:24-alpine`.
