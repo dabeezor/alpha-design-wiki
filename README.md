@@ -65,7 +65,7 @@ When `PUBLIC_REMARK_HOST` is not set, the embed is skipped.
 
 ### Comments on a hand-built page
 
-A page that does not use Starlight can still have comments. Copy  into the page where the comments go, then set .
+A page that does not use Starlight can still have comments. Copy `comments/remark42.html` into the page where the comments go, then set `SITE_ID`.
 It uses the same Remark42 server as the footer. Readers sign in with their own account, and Remark42 tracks each comment to it.
 
 ## Bump the pin in a project
