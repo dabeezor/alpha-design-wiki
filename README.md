@@ -81,3 +81,10 @@ This repo is public. The template depends on the release tarball, so `npm ci` ne
 - One-time Komodo setup: the `design-wiki` Stack must declare `tags/<slug>.env` in `additional_env_files`. Its compose service `<slug>` must use `${WIKI_<SLUG>_TAG}`.
 - Jenkins credentials: `komodo-api-key` (Komodo API) and `github-dabeezor` (alpha-forge checkout).
 - Two wikis that deploy at the same time can collide on the Stack. The deploy script waits for a running Update. A race that remains is accepted.
+
+## Changelog
+
+- v0.1.3: Wide layout. On desktop (72rem and up) the content column fills the width between the left nav and the right sidebar. The right sidebar is fixed at `--sl-sidebar-width` at the right edge. Prose stays at 80ch. Phone and tablet layouts are unchanged.
+- v0.1.2: `comments/remark42.html` snippet for hand-built pages.
+- v0.1.1: `version.txt` comes only from `public/`. Tarball dependency.
+- v0.1.0: First release.

@@ -80,3 +80,27 @@
   color: var(--aw-text-muted);
   font-size: var(--sl-text-sm);
 }
+
+/*
+ * Wide layout (desktop, 72rem and up, where Starlight shows the right sidebar).
+ * Starlight splits the space left over by the content width between the main
+ * column and the right sidebar. A very large content width leaves no space to
+ * split, so the main column takes all of the width between the left nav and the
+ * right sidebar. The right sidebar stays at --sl-sidebar-width, at the right edge.
+ * Phone and tablet layouts keep the Starlight values.
+ */
+@media (min-width: 72rem) {
+  :root {
+    --sl-content-width: 200rem;
+    --sl-content-pad-x: 2rem;
+  }
+  /* A fixed box is as wide as the viewport at 100%. Bind it to the right edge instead. */
+  .right-sidebar {
+    width: var(--sl-sidebar-width);
+    inset-inline-end: 0;
+  }
+}
+
+/* Prose keeps a readable measure. Media, tables and embeds span the column. */
+.sl-markdown-content :is(p, li, dd, blockquote) { max-width: 80ch; }
+.sl-markdown-content :is(img, svg, table, iframe, figure, video, pre) { max-width: 100%; }
